@@ -314,9 +314,13 @@ gels -- 凝胶，希冀该项目能成为联结设计、开发，前端、后端
             "message": "data trans success."
         }
     ```
+## 项目地址
+凝胶（gels）项目： https://github.com/zhoutk/gels
+
 ## 相关视频课程
  
-传送门： [nodejs实战之智能微服务快速开发框架][1]  
-凝胶（gels）项目： https://github.com/zhoutk/gels
+[运用typescript进行node.js后端开发精要][1]  
+[nodejs实战之智能微服务快速开发框架][1]  
+
 
   [1]: https://segmentfault.com/l/1500000016954243?r=bPPDLn
