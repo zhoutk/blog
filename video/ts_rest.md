@@ -5,7 +5,7 @@
 
 A framework,  which use koa2, mysql, graphql &amp; typescript , to build micro service rapidly, safely &amp; efficiently.
 
-gels -- 凝胶，希冀该项目能成为联结设计、开发，前端、后端的“强力胶水”，成为微服务快速开发的有力框架。
+gels -- 凝胶，希冀该项目能成为联结设计、开发，前端、后端的“强力胶水”，成为微服务快速开发的有力框架。  
 项目地址： https://github.com/zhoutk/gels
 
 ## 设计思路
