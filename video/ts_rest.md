@@ -1,3 +1,5 @@
+# 智能微服务的设计与开发（node.js）
+
 ## 设计目标
 基于koa2、关系数据库（暂时只支持mysql）建立的智能微服务快速开发框架，将同时支持graphql与rest标准，使用typescript语言编写，力求安全、高效。  
 
@@ -414,7 +416,6 @@
 凝胶（gels）项目： https://github.com/zhoutk/gels  
 视频讲座资料： https://github.com/zhoutk/sifou  
 个人博客： https://segmentfault.com/blog/zhoutk  
-个人博客： https://github.com/zhoutk/blog  
 
 ## 相关视频资料
  
