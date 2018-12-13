@@ -307,9 +307,9 @@
   
 ## 资源地址
 
-凝胶（gels）项目： https://github.com/zhoutk/gels
-视频讲座资料： https://github.com/zhoutk/sifou
-个人博客： https://segmentfault.com/blog/zhoutk
+凝胶（gels）项目： https://github.com/zhoutk/gels  
+视频讲座资料： https://github.com/zhoutk/sifou  
+个人博客： https://segmentfault.com/blog/zhoutk  
 
   [1]: https://segmentfault.com/l/1500000016954243
   [2]: https://segmentfault.com/l/1500000017034959
