@@ -8,3 +8,10 @@
 - [x] [3.JSON-ORM（对象关系映射）设计与实现--mysql智能查询](https://github.com/zhoutk/blog/blob/master/video/mysql_query.md)
 - [x] [4.Koa2封装数据库高级操作--mysql高级功能](https://github.com/zhoutk/blog/blob/master/video/mysql_advance.md)
 - [x] [5.蜘蛛实时爬取数据提供图书信息微服务--mysql高级功能](https://github.com/zhoutk/blog/blob/master/video/gels_spider.md)
+
+### 译文分享
+- [x] [1.学习编程并不是学习编程语言](https://github.com/zhoutk/blog/blob/master/fanyi/language.md)
+
+### 开源项目
+- [x] [1.gels(凝胶)——一个快速微服务开发框架](https://github.com/zhoutk/blog/blob/master/project/gels.md)
+- [x] [2.leetcode_test——简单易用的leetcode开发测试工具](https://github.com/zhoutk/blog/blob/master/project/leetcodetest.md)
