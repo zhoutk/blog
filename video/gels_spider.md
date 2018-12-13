@@ -1,9 +1,10 @@
 > 相关视频： 
 
-- [运用typescript进行node.js后端开发精要][1] 
-- [nodejs实战之智能微服务快速开发框架][2]
+- [运用typescript进行node.js后端开发精要][1]  
+- [nodejs实战之智能微服务快速开发框架][2] 
 - [JSON-ORM（对象关系映射）设计与实现][3] 
 - [Koa2封装数据库高级操作][4] 
+- [蜘蛛实时爬取数据提供图书信息微服务][5]  
 
 ## 特点
 - 成熟项目经验，经过总结、提炼、精简、重构，实现图书信息的实时抓取并提供restful服务。  
@@ -81,7 +82,7 @@
     }
     ```
 
-##项目结构
+## 项目结构
 
 ```
 ├── package.json
@@ -132,19 +133,19 @@
 - [PUT] /rs/books/{id}, 修改图书信息
 - [DELETE] /rs/books/{id}, 删除图书信息
 
-##相关视频课程
+## 相关视频课程
  
 [运用typescript进行node.js后端开发精要][1]  
-[nodejs实战之智能微服务快速开发框架][2] 
-[JSON-ORM（对象关系映射）设计与实现][3] 
-[Koa2封装数据库高级操作][4] 
-[蜘蛛实时爬取数据提供图书信息微服务][5]
+[nodejs实战之智能微服务快速开发框架][2]  
+[JSON-ORM（对象关系映射）设计与实现][3]  
+[Koa2封装数据库高级操作][4]  
+[蜘蛛实时爬取数据提供图书信息微服务][5]
   
-##资源地址
+## 资源地址
 
-凝胶（gels）项目： https://github.com/zhoutk/gels
-视频讲座资料： https://github.com/zhoutk/sifou
-个人博客： https://segmentfault.com/blog/zhoutk
+凝胶（gels）项目： https://github.com/zhoutk/gels  
+视频讲座资料： https://github.com/zhoutk/sifou  
+个人博客： https://segmentfault.com/blog/zhoutk  
 
   [1]: https://segmentfault.com/l/1500000016954243
   [2]: https://segmentfault.com/l/1500000017034959
