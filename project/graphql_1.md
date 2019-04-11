@@ -1,4 +1,4 @@
-# Graphql实战系列（一）
+# Graphql实战系列（上）
 
 ## 背景介绍
   graphql越来越流行，一直想把我的凝胶项目除了支持restful api外，也能同时支持graphql。由于该项目的特点是结合关系数据库的优点，尽量少写重复或雷同的代码。对于rest api，在做完数据库设计后，百分之六十到八十的接口就已经完成了，但还需要配置上api文档。而基于数据库表自动实现graphql，感觉还是有难度的，但若能做好，连文档也就同时提供了。  
@@ -169,22 +169,24 @@ const resolvers = {
 
 export {
   typeDefs,
-  resolvers,
+  resolvers
 }
 
 ```
 
-##项目地址
+## 项目地址
 ```
-https://github.com/zhoutk/goTools
+https://github.com/zhoutk/gels
 ```
-##使用方法
+## 使用方法
 ```
-git clone https://github.com/zhoutk/goTools
-cd goTools
-go get
-go run bock.go
+git clone https://github.com/zhoutk/gels
+cd gels
+yarn
+tsc -w
+nodemon dist/index.js
+```
+然后就可以用浏览器打开链接：http://localhost:5000/graphql 查看效果了。
 
-go buid bock.go
-./bock        
-```
+## 小结
+这是第一部分，确定需求，进行了技术选型，实现了接入静态手写schema试验，下篇将实现动态生成与合并特殊业务模型。
