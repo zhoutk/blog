@@ -25,6 +25,8 @@ so, ready go...
 - kao-graphql
 - apollo-server-koa
 
+## kao-graphql实现
+
 开始是考虑简单为上，试着用kao-graphql，作为中间件可以方便的接入，我指定了/gql路由，可以测试效果，代码如下：
 ```
 import * as Router from 'koa-router'
@@ -95,6 +97,8 @@ export default (() => {
 > 这种方式有个问题，前面的变量对象中要引入后面定义的变量对象会出问题，因此投入了apollo-server。但apollo-server 2.0网上资料少，大多是介绍1.0的，而2.0变动又比较大，因此折腾了一段时间，还是要多看英文资料。
 > apollo-server 2.0集成很多东西到里面，包括cors，bodyParse，graphql-tools 等。
 
+## apollo-server 2.0实现静态schema
+
 通过中间件加载，放到rest路由之前，加入顺序及方式请看app.ts，apollo-server-kao接入代码：
 ```
 //自动生成数据库表的基础schema，并合并了手写的业务模块
@@ -115,4 +119,72 @@ export default async (app) => {    //app是koa实例
   }
   G.ApolloServer.applyMiddleware({ app })
 }
+```
+
+静态schema试验，schema_generate.ts
+
+```
+const typeDefs = `
+  type Author {
+    id: Int!
+    name: String
+    books: [book]
+  }
+  type Book {
+    id: Int!
+    title: String
+    author: Author
+  }
+  # the schema allows the following query:
+  type Query {
+    books: [Post]
+    author(id: Int!): Author
+  }
+`
+
+const resolvers = {
+  Query: {
+    books: async function (_, args) {
+               let rs = await new BaseDao('book').retrieve(args)
+               return rs.data
+           },
+    author: async function (_, { id }) {
+               let rs = await new BaseDao('author').retrieve({id})
+               return rs.data[0]
+           },
+  },
+  Author: {
+    books: async function (author) {
+               let rs = await new BaseDao('book').retrieve({ author_id: author.id })
+               return rs.data
+           },
+   },
+   Book: {
+    author: async function (book) {
+               let rs = await new BaseDao('author').retrieve({ id: book.author_id })
+               return rs.data[0]
+           },
+   },
+}
+
+export {
+  typeDefs,
+  resolvers,
+}
+
+```
+
+##项目地址
+```
+https://github.com/zhoutk/goTools
+```
+##使用方法
+```
+git clone https://github.com/zhoutk/goTools
+cd goTools
+go get
+go run bock.go
+
+go buid bock.go
+./bock        
 ```
