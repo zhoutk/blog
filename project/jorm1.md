@@ -54,9 +54,7 @@
     p.AddValueString("password", "123");
     p.AddValueString("fuzzy", "1");
     (new BaseDb(...))->select("users", p);
-    ```
-    查询示例
-    ```
+   
     生成sql：   SELECT * FROM users  WHERE username like '%john%'  and password like '%123%'
 - ins, lks, ors
     这是最重要的三种查询方式，如何找出它们之间的共同点，减少冗余代码是关键。
@@ -67,6 +65,7 @@
         Rjson p;
         p.AddValueString("ins", "age,11,22,36");
         (new BaseDb(...))->select("users", p);
+
         生成sql：   SELECT * FROM users  WHERE age in ( 11,22,26 )
         ```
     - ors, 数据库表多字段精确查询，or连接，多个字段对多个值，例：  
@@ -75,6 +74,7 @@
         Rjson p;
         p.AddValueString("ors", "age,11,age,36");
         (new BaseDb(...))->select("users", p);
+
         生成sql：   SELECT * FROM users  WHERE  ( age = 11  or age = 26 )
         ```
     - lks, 数据库表多字段模糊查询，or连接，多个字段对多个值，例：
@@ -83,6 +83,7 @@
         Rjson p;
         p.AddValueString("lks", "username,john,password,123");
         (new BaseDb(...))->select("users", p);
+
         生成sql：   SELECT * FROM users  WHERE  ( username like '%john%'  or password like '%123%'  )
         ```
 - count, sum
@@ -93,6 +94,7 @@
         Rjson p;
         p.AddValueString("count", "1,total");
         (new BaseDb(...))->select("users", p);
+
         生成sql：   SELECT *,count(1) as total  FROM users
         ```
     - sum, 数据库查询函数sum，字段求和，例：
@@ -101,6 +103,7 @@
         Rjson p;
         p.AddValueString("sum", "age,ageSum");
         (new BaseDb(...))->select("users", p);
+
         生成sql：   SELECT username,sum(age) as ageSum  FROM users
     ```
 - group, 数据库分组函数group，例：  
@@ -109,6 +112,7 @@
         Rjson p;
         p.AddValueString("group", "age");
         (new BaseDb(...))->select("users", p);
+
         生成sql：   SELECT * FROM users  GROUP BY age
         ```
 
@@ -123,6 +127,7 @@
     Rjson p;
     p.AddValueString("age", ">,10");
     (new BaseDb(...))->select("users", p);
+
     生成sql：   SELECT * FROM users  WHERE age> 10
     ```
 - 一个字段二个操作，示例：
@@ -131,6 +136,7 @@
     Rjson p;
     p.AddValueString("age", ">=,10,<=,33");
     (new BaseDb(...))->select("users", p);
+
     生成sql：   SELECT * FROM users  WHERE age>= 10 and age<= 33
     ```
 - 使用"="去除字段的search影响，示例：
@@ -141,7 +147,7 @@
     p.AddValueString("username", "john");
     p.AddValueString("fuzzy", "1");
     (new BaseDb(...))->select("users", p);
-    请求URL：  /rs/users?age==,22&username=i&search
+
     生成sql：   SELECT * FROM users  WHERE age= 18  and username like '%john%'
     ```
     
