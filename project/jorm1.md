@@ -108,13 +108,13 @@
     ```
 - group, 数据库分组函数group，例：  
     查询示例：
-        ```
-        Rjson p;
-        p.AddValueString("group", "age");
-        (new BaseDb(...))->select("users", p);
+    ```
+    Rjson p;
+    p.AddValueString("group", "age");
+    (new BaseDb(...))->select("users", p);
 
-        生成sql：   SELECT * FROM users  GROUP BY age
-        ```
+    生成sql：   SELECT * FROM users  GROUP BY age
+    ```
 
 > 不等操作符查询支持
 
