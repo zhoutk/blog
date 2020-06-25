@@ -3,7 +3,7 @@
 重操C++旧业，习惯通常的数据库操作方式，因此抽时间，把JSON-ORM封装了一个C++版，现支持sqlit3与mysql，postgres已经做好了准备。  
 
 ### 设计思路
-  我们通用的ORM，基本模式都是想要脱离数据库的，几乎都在编程语言层面建立模型，由程序去与数据库打交道。虽然脱离了数据库的具体操作，但我们要建立各种模型文档，用代码去写表之间的关系等等操作，让初学者一时如坠云雾。我的想法是，将关系数据库拥有的完善设计工具之优势与微服务结合起来，数据设计提供结构信息；前端送到后端的json对象自动映射成为标准的SQL查询语句。只要我们理解了标准的SQL语言，我们就能够完成数据库查询操作。
+  我们通用的ORM，基本模式都是想要脱离数据库的，几乎都在编程语言层面建立模型，由程序去与数据库打交道。虽然脱离了数据库的具体操作，但我们要建立各种模型文档，用代码去写表之间的关系等等操作，让初学者一时如坠云雾。我的想法是，将关系数据库拥有的完善设计工具之优势，来实现数据设计以提供结构信息，让json对象自动映射成为标准的SQL查询语句。只要我们理解了标准的SQL语言，我们就能够完成数据库查询操作。
 
 ### 技术选择
 #### json库
@@ -32,99 +32,84 @@
   我选择的技术实现方式，基本上是最底层高效的方式。sqlit3 - sqllit3.h（官方的标准c接口）；mysql - c api （MySQL Connector C 6.1）；postgres - pqxx；oracle - occi；mssql - ？
     
 #### 智能查询方式设计
-> 查询保留字：fields, page, size, sort, search, lks, ins, ors, count, sum, group
+> 查询保留字：page, size, sort, fuzzy, lks, ins, ors, count, sum, group
 
-- fields, 定义查询结果字段，支持数组和逗号分隔字符串两种形式
-    由前端来确定返回的数据库字段信息，这样后端的设计可以适用面更广泛，而不会造成网络带宽的浪费。
-    在KOA2的框架下，GET请求要支持输入数组，只能把同一个key多次输入，如：age=11&age=22。这样很不方便，我实现了一个参数转换函数，针对数组提供多种输入形式。
-    arryParse
-    ```
-        arryParse(arr): Array<any>|null {                      //返回值为数据或空值
-            try {
-                if (Array.isArray(arr) || G.L.isNull(arr)) {   //如果输入是数组或空，直接返回
-                    return arr
-                } else if (typeof arr === 'string') {          //若是字符串
-                    if (arr.startsWith('[')) {                 //数组的字符串形式，进行转换
-                        arr = JSON.parse(arr)
-                    } else {
-                        //逗号拼接的字符串，mysql的驱动同时支持参数以字符串形式或数组形式提供，
-                        //所以这里可以不加判断，直接用split函数将字符串转化为数组
-                        arr = arr.split(',')                   
-                    }
-                }
-            } catch (err) {
-                arr = null            //数组的字符串形式转换失败，刘明输入参数是错误的
-            }
-            return arr
-        }
-    ```
-    查询示例：
-    ```
-    请求URL：  /rs/users?username=white&age=22&fields=["username","age"]
-    生成sql：   SELECT username,age FROM users  WHERE username = ?  and age = ?
-    ```
 - page, size, sort, 分页排序
-    在mysql中这比较好实现，limit来分页是很方便的，排序只需将参数直接拼接到order by后就好了。  
+    在sqlit3与mysql中这比较好实现，limit来分页是很方便的，排序只需将参数直接拼接到order by后就好了。  
     查询示例：
     ```
-    请求URL：  /rs/users?page=1&size=10&sort=age desc
+    Rjson p;
+    p.AddValueInt("page", 1);
+    p.AddValueInt("size", 10);
+    p.AddValueString("size", "sort desc");
+    (new BaseDb(...))->select("users", p);
+    
     生成sql：   SELECT * FROM users  ORDER BY age desc LIMIT 0,10
     ```
-- search, 模糊查询切换参数，不提供时为精确匹配
-    提供字段查询的精确匹配与模糊匹配的切换，实现过程中，注意参数化送入参数时，like匹配，是要在参数两边加%，而不是在占位符两边加%。
-    另外，同一个字段匹配两次模糊查询，需要特别处理，我提供了一种巧妙的方法：
+- fuzzy, 模糊查询切换参数，不提供时为精确匹配
+    提供字段查询的精确匹配与模糊匹配的切换。
     ```
-    //将值用escape编码，数组将转化为逗号连接的字符串，用正则全局替换，变成and连接
-    value = pool.escape(value).replace(/\', \'/g, "%' and " + key + " like '%")   
-    //去掉两头多余的引号
-    value = value.substring(1, value.length - 1)    
-    //补齐条件查询语句，这种方式，比用循环处理来得快捷，它统一了数组与其它形式的处理方式                              
-    where += key + " like '%" + value + "%'"                                      
+    Rjson p;
+    p.AddValueString("username", "john");
+    p.AddValueString("password", "123");
+    p.AddValueString("fuzzy", "1");
+    (new BaseDb(...))->select("users", p);
     ```
     查询示例
     ```
-    请求URL：  /rs/users?username=i&password=1&search
-    生成sql：   SELECT * FROM users  WHERE username like ?  and password like ?
+    生成sql：   SELECT * FROM users  WHERE username like '%john%'  and password like '%123%'
 - ins, lks, ors
     这是最重要的三种查询方式，如何找出它们之间的共同点，减少冗余代码是关键。
 
     - ins, 数据库表单字段in查询，一字段对多个值，例：  
         查询示例：
         ```
-        请求URL：  /rs/users?ins=["age",11,22,26]
-        生成sql：   SELECT * FROM users  WHERE age in ( ? )
+        Rjson p;
+        p.AddValueString("ins", "age,11,22,36");
+        (new BaseDb(...))->select("users", p);
+        生成sql：   SELECT * FROM users  WHERE age in ( 11,22,26 )
         ```
-    - ors, 数据库表多字段精确查询，or连接，多个字段对多个值，支持null值查询，例：  
+    - ors, 数据库表多字段精确查询，or连接，多个字段对多个值，例：  
         查询示例：
         ```
-        请求URL：  /rs/users?ors=["age",1,"age",22,"password",null]
-        生成sql：   SELECT * FROM users  WHERE  ( age = ?  or age = ?  or password is null )
+        Rjson p;
+        p.AddValueString("ors", "age,11,age,36");
+        (new BaseDb(...))->select("users", p);
+        生成sql：   SELECT * FROM users  WHERE  ( age = 11  or age = 26 )
         ```
-    - lks, 数据库表多字段模糊查询，or连接，多个字段对多个值，支持null值查询，例：
+    - lks, 数据库表多字段模糊查询，or连接，多个字段对多个值，例：
         查询示例：
         ```
-        请求URL：  /rs/users?lks=["username","i","password",null]
-        生成sql：   SELECT * FROM users  WHERE  ( username like ?  or password is null  )
+        Rjson p;
+        p.AddValueString("lks", "username,john,password,123");
+        (new BaseDb(...))->select("users", p);
+        生成sql：   SELECT * FROM users  WHERE  ( username like '%john%'  or password like '%123%'  )
         ```
 - count, sum
     这两个统计求和，处理方式也类似，查询时一般要配合group与fields使用。
     - count, 数据库查询函数count，行统计，例：
         查询示例：
         ```
-        请求URL：  /rs/users?count=["1","total"]&fields=["username"]
-        生成sql：   SELECT username,count(1) as total  FROM users
+        Rjson p;
+        p.AddValueString("count", "1,total");
+        (new BaseDb(...))->select("users", p);
+        生成sql：   SELECT *,count(1) as total  FROM users
         ```
     - sum, 数据库查询函数sum，字段求和，例：
         查询示例：
         ```
-        请求URL：  /rs/users?sum=["age","ageSum"]&fields=["username"]
+        Rjson p;
+        p.AddValueString("sum", "age,ageSum");
+        (new BaseDb(...))->select("users", p);
         生成sql：   SELECT username,sum(age) as ageSum  FROM users
     ```
 - group, 数据库分组函数group，例：  
     查询示例：
         ```
-        请求URL：  /rs/users?group=age&count=["*","total"]&fields=["age"]
-        生成sql：   SELECT age,count(*) as total  FROM users  GROUP BY age
+        Rjson p;
+        p.AddValueString("group", "age");
+        (new BaseDb(...))->select("users", p);
+        生成sql：   SELECT * FROM users  GROUP BY age
         ```
 
 > 不等操作符查询支持
@@ -135,20 +120,29 @@
 - 一个字段一个操作，示例：
     查询示例：
     ```
-    请求URL：  /rs/users?age=>,10
-    生成sql：   SELECT * FROM users  WHERE age> ?
+    Rjson p;
+    p.AddValueString("age", ">,10");
+    (new BaseDb(...))->select("users", p);
+    生成sql：   SELECT * FROM users  WHERE age> 10
     ```
 - 一个字段二个操作，示例：
     查询示例：
     ```
-    请求URL：  /rs/users?age=>,10,<=,35
-    生成sql：   SELECT * FROM users  WHERE age> ? and age<= ?
+    Rjson p;
+    p.AddValueString("age", ">=,10,<=,33");
+    (new BaseDb(...))->select("users", p);
+    生成sql：   SELECT * FROM users  WHERE age>= 10 and age<= 33
     ```
 - 使用"="去除字段的search影响，示例：
     查询示例：
     ```
+    Rjson p;
+    p.AddValueString("age", "=,18");
+    p.AddValueString("username", "john");
+    p.AddValueString("fuzzy", "1");
+    (new BaseDb(...))->select("users", p);
     请求URL：  /rs/users?age==,22&username=i&search
-    生成sql：   SELECT * FROM users  WHERE age= ?  and username like ?
+    生成sql：   SELECT * FROM users  WHERE age= 18  and username like '%john%'
     ```
     
 #### 系列文章规划
