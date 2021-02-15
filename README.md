@@ -18,3 +18,4 @@
 - [x] [3.c++操作关系数据库通用接口设计（JSON-ORM c++版）](https://github.com/zhoutk/blog/blob/master/project/jorm1.md)
 - [x] [4.封装rapidjson用于数据库及网络数据传输](https://github.com/zhoutk/blog/blob/master/project/jorm2.md)
 - [x] [5.sqlit3 数据库操作的实现与解析](https://github.com/zhoutk/blog/blob/master/project/jorm3.md)
+- [x] [6.Qt5编程实例](https://github.com/zhoutk/qtDemo/blob/master/README.md)
